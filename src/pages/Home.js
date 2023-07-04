@@ -5,7 +5,13 @@ import WorldData from "../World.json"
 import DateRangePicker from '../components/DateRanger'
 
 const Home = () => {
-  const [commerceType, setCommerceType] = useState("Home")
+  const options = [
+    { value: 'Home', label: 'Home' },
+    { value: 'Residence', label: 'Residence' },
+    { value: 'Land', label: 'Land / Farm' },
+    { value: 'workplace', label: 'Workplace' },
+    { value: 'lake', label: 'Lake' },
+  ];
   const [rentorsale, setRentorsale] = useState("rent")
   const [country, setCountry] = useState("Afghanistan")
   const [state, setState] = useState()
@@ -21,11 +27,26 @@ const Home = () => {
       key: "selection",
     },
   ]);
+  const [commerceType, setCommerceType] = useState(["Home"]);
+
+  const handleOptionClick = (optionValue) => {
+    if (commerceType.includes(optionValue)) {
+      setCommerceType(commerceType.filter((value) => value !== optionValue));
+    } else {
+      setCommerceType([...commerceType, optionValue]);
+    }
+  };
+  
+  const [currentImage, setCurrentImage] = useState(0);
+  const images = [
+    "https://images.unsplash.com/photo-1687226014417-b22aaaa288e7?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=750&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4ODQ0OTAzNA&ixlib=rb-4.0.3&q=80&w=1920",
+    "https://images.unsplash.com/photo-1687226197732-f91552499640?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=750&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4ODQ0OTA1Nw&ixlib=rb-4.0.3&q=80&w=1920"
+  ]
 
   const handleClear = () => {
     setCommerceType("Home")
     setRentorsale("rent")
-    setCountry("Afghanistan")
+    setCountry("")
     setState()
     setRoom("1+1")
     setreSale(false)
@@ -93,27 +114,42 @@ const Home = () => {
     setMinMax([newMin, newMax]);
   };
 
+  
+  const handleNextImage = () => {
+    setCurrentImage((prevImage) => (prevImage + 1) % images.length);
+  };
+
+  const handlePreviousImage = () => {
+    setCurrentImage((prevImage) =>
+      prevImage === 0 ? images.length - 1 : prevImage - 1
+    );
+  };
+
+
   return (
     <div className="h-full flex w-screen flex-col pt-48 px-24 m-auto bg-[#ececec]">
-      <img src="https://images.unsplash.com/photo-1685124762520-e7ddb57c9ce7?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=750&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4ODQyMTE3OQ&ixlib=rb-4.0.3&q=80&w=1920" alt="" className="absolute left-0 top-0 xl:-top-36 -z-0 w-screen object-cover object-top"/>
-      <div className=" w-full p-12 h-auto bg-[#ececec] border-[1px] border-[#cccc] rounded-lg flex flex-col gap-6 z-10">
-        <div className="w-full h-auto grid grid-cols-2 sm:flex justify-between items-center">
-          <Button onClick={() => setCommerceType("Home")} colorScheme='blackAlpha' variant={commerceType === "Home" ? 'solid' : 'ghost'}>
-            Home
-          </Button>
-          <Button onClick={() => setCommerceType("Residance")} colorScheme='blackAlpha' variant={commerceType === "Residance" ? 'solid' : 'ghost'}>
-            Residence
-          </Button>
-          <Button onClick={() => setCommerceType("Land")} colorScheme='blackAlpha' variant={commerceType === "Land" ? 'solid' : 'ghost'}>
-            Land / Farm
-          </Button>
-          <Button onClick={() => setCommerceType("workplace")} colorScheme='blackAlpha' variant={commerceType === "workplace" ? 'solid' : 'ghost'}>
-            Workplace
-          </Button>
-          <Button onClick={() => setCommerceType("lake")} colorScheme='blackAlpha' variant={commerceType === "lake" ? 'solid' : 'ghost'}>
-            Lake
-          </Button>
-        </div>
+ <div>
+      <button onClick={handlePreviousImage}>Gerçekten Önceki</button>
+      <img
+        src={images[currentImage]}
+        alt="Değiştirilebilir resim"
+        className="absolute left-0 top-0 xl:-top-36 -z-0 w-screen object-cover object-top"
+      />
+      <button onClick={handleNextImage}>Sonraki</button>
+    </div>
+    <div className=" w-full p-12 h-auto bg-[#ececec] border-[1px] border-[#cccc] rounded-lg flex flex-col gap-6 z-10">
+    <div className="w-full h-auto grid grid-cols-2 sm:flex justify-between items-center">
+      {options.map((option) => (
+        <Button
+          key={option.value}
+          onClick={() => handleOptionClick(option.value)}
+          colorScheme="blackAlpha"
+          variant={commerceType.includes(option.value) ? 'solid' : 'ghost'}
+        >
+          {option.label}
+        </Button>
+      ))}
+    </div>
 
         <div className="flex flex-col xl:flex-row gap-4">
           <Input
@@ -135,6 +171,7 @@ const Home = () => {
         <form onSubmit={(e) => {
           e.preventDefault()
           console.log({
+            "commerceType": commerceType,
             "keywords": keywords,
             "RentOrSale": rentorsale,
             "Country": country,
