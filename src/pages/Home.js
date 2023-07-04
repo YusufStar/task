@@ -172,7 +172,7 @@ const Home = () => {
           e.preventDefault()
           console.log({
             "commerceType": commerceType,
-            "keywords": keywords,
+            "keyword": keywords,
             "RentOrSale": rentorsale,
             "Country": country,
             "state": state,
